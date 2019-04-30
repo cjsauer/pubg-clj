@@ -1,6 +1,6 @@
 # pubg-clj
 
-This library enables idiomatic access to the [PubG API][1] using the Clojure
+This library enables idiomatic access to the [PUBG API][1] using the Clojure
 programming language, as well as [specs][2] and a [Datascript][3] schema for
 a large portion of the API, allowing for more powerful data mining.
 
@@ -91,7 +91,7 @@ Here is an example:
     (d/create-conn schema)))
 ```
 
-We now have a Datascript connection that is ready to ingest PubG API data!
+We now have a Datascript connection that is ready to ingest PUBG API data!
 We did this by generating a schema from our "master specification". Let's
 try it out by transacting our fetched player against the connection:
 
