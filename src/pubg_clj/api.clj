@@ -210,19 +210,21 @@
   accepts an err callback that will be passed exception data for every match
   that fails to load. Exception data will contain ::pubg/match-id for
   reference."
-  [{:as player :keys [pubg.player/matches pubg/shard-id]} & [err]]
-  (let [match-ids (map :pubg.match/id matches)]
+  [player & [err]]
+  (let [{:keys [pubg.player/matches pubg/shard-id]} player
+        match-ids                                   (map :pubg.match/id matches)]
     (batch-get-matches shard-id match-ids err)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Telemetry
 
 (defn fetch-match-telemetry
-  [{:as match :keys [pubg.match/telemetry]}]
-  (let [url (:pubg.match.telemetry/url telemetry)
-        events (->> (pubg-fetch {:url url})
-                    :body
-                    p/telemetry-events-parse)]
+  [match]
+  (let [{:keys [pubg.match/telemetry]} match
+        url                            (:pubg.match.telemetry/url telemetry)
+        events                         (->> (pubg-fetch {:url url})
+                                            :body
+                                            p/telemetry-events-parse)]
     (assoc events :pubg.match.telemetry/url url)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -262,9 +264,10 @@
   division.bro.official.2018-09. It is probably best to always include the
   region, as the API will respond with stats for EVERY region in the cases where
   it is depracated."
-  [{:as player :keys [pubg.player/id pubg/shard-id]} season-id & [region]]
-  (->> (pubg-fetch {:platform shard-id
-                    :region (or region "")
-                    :endpoint (season-stats-endpoint id season-id)})
-       :body
-       p/player-season-stats-parse))
+  [player season-id & [region]]
+  (let [{:keys [pubg.player/id pubg/shard-id]} player]
+    (->> (pubg-fetch {:platform shard-id
+                      :region (or region "")
+                      :endpoint (season-stats-endpoint id season-id)})
+         :body
+         p/player-season-stats-parse)))
