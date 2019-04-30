@@ -1,0 +1,6 @@
+{:paths ["src"]
+ :deps {org.clojure/core.async {:mvn/version "0.4.490"}
+        clj-http {:mvn/version "3.9.1"}
+        cheshire {:mvn/version "5.8.1"}
+        camel-snake-kebab {:mvn/version "0.4.0"}
+        }}
