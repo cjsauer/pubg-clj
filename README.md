@@ -175,9 +175,16 @@ added for pulling in a few development dependencies (Datascript included).
 Please feel free to open pull requests with additional features, or new issues
 if you happen to find problems (I'm sure there are a few).
 
+## License
+
+Copyright © 2019 Calvin Sauer
+
+Licensed under MIT License (see [LICENSE][7]).
+
 [1]: https://developer.playbattlegrounds.com
 [2]: https://clojure.org/guides/spec
 [3]: https://github.com/tonsky/datascript
 [4]: https://clojure.org/guides/deps_and_cli
 [5]: ./src/pubg_clj/api/omni.cljc
 [6]: ./src/pubg_clj/api.clj
+[7]: ./LICENSE
