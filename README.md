@@ -11,7 +11,7 @@ Add this project as a git dependency to your `deps.edn` file:
 ```Clojure
 {:deps
  {cjsauer/pubg-clj {:git/url "https://github.com/cjsauer/pubg-clj"
-                    :sha     "57df77944b990341f6886b40bda4ca120989fdc2"}}}
+                    :sha     "54dc198af97029c612b868f49769051abd9a7ed9"}}}
 ```
 
 (See [this guide][4] for reference.)
