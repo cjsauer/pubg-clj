@@ -279,7 +279,7 @@
          :body
          p/player-season-stats-parse)))
 
-(defn fetch-player-ranked-season-stats
+(defn fetch-player-season-ranked-stats
   "Fetches the season stats for a given platform, player and season. For
   seasons prior to division.bro.official.2018-09, provide a
   platform-shard instead of platform."
