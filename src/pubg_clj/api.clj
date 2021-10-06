@@ -91,7 +91,7 @@
 (defn- season-stats-endpoint
   [player-id season-id]
   (str "players/" player-id "/seasons/" season-id))
-(defn- season-stats-ranked-endpoint
+(defn- season-ranked-stats-endpoint
   [player-id season-id]
   (str "players/" player-id "/seasons/" season-id "/ranked"))
 
@@ -275,7 +275,7 @@
          :body
          p/player-season-stats-parse)))
 
-(defn fetch-player-season-ranked-stats
+(defn fetch-player-ranked-season-stats
   "Fetches the ranked season stats for a given player and season. The
   region is required for PS4, Xbox, and for stats of PC players prior
   to and including division.bro.official.2018-09. It is probably best
@@ -288,4 +288,4 @@
            :region (or region ""),
            :endpoint (season-stats-ranked-endpoint id season-id)})
          :body
-         p/player-season-stats-ranked-parse)))
+         p/player-season-ranked-stats-parse)))
