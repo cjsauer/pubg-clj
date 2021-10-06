@@ -26,11 +26,10 @@
   "Constructs a valid PubG API URL given a platform, region, and endpoint. region
   is optional. Query parameters are not included, and should be added by the
   HTTP client mechanism."
-  [{:keys [platform region endpoint]}]
+  [{:keys [platform endpoint]}]
   (cond-> "https://api.pubg.com/"
-    (or platform region) (concat "shards/")
+    (or platform) (concat "shards/")
     platform             (concat platform)
-    region               (concat "-" region)
     endpoint             (concat "/" endpoint)
     true str/join))
 
@@ -45,7 +44,7 @@
   region (optional), endpoint and query parameters (qparams). Platform, region
   and endpoint are all used to construct the final URL, but this can be
   overidden using the url key. Returns the response map."
-  [{:keys [api-key platform region endpoint qparams url] :as opts}]
+  [{:keys [api-key platform endpoint qparams url] :as opts}]
   (let [api-key (or api-key *api-key*)
         url (or url (api-url opts))
         resp (http/get url
@@ -60,7 +59,7 @@
   and endpoint are all used to construct the final URL, but this can be
   overidden with the url key. Passes the response map to succ upon success, or
   exception data to err upon failure."
-  [{:keys [api-key platform region endpoint qparams url] :as opts} succ err]
+  [{:keys [api-key platform endpoint qparams url] :as opts} succ err]
   (let [api-key (or api-key *api-key*)]
     (let [url (or url (api-url opts))]
       (http/get url {:accept "application/vnd.api+json"
@@ -200,9 +199,8 @@
 
 (defn fetch-match-samples
   "Fetches n random matches for the given platform and region in parallel."
-  [n platform region]
+  [n platform]
   (let [match-samples (->> (pubg-fetch {:platform platform
-                                        :region region
                                         :endpoint (match-samples-endpoint)})
                            :body :data :relationships :matches :data
                            (map :id))]
@@ -267,10 +265,9 @@
   division.bro.official.2018-09. It is probably best to always include the
   region, as the API will respond with stats for EVERY region in the cases where
   it is depracated."
-  [player season-id & [region]]
+  [player season-id]
   (let [{:keys [pubg.player/id pubg/shard-id]} player]
     (->> (pubg-fetch {:platform shard-id
-                      :region (or region "")
                       :endpoint (season-stats-endpoint id season-id)})
          :body
          p/player-season-stats-parse)))
@@ -281,11 +278,10 @@
   to and including division.bro.official.2018-09. It is probably best
   to always include the region, as the API will respond with stats for
   EVERY region in the cases where it is depracated."
-  [player season-id & [region]]
+  [player season-id]
   (let [{:keys [pubg.player/id pubg/shard-id]} player]
     (->> (pubg-fetch
           {:platform shard-id,
-           :region (or region ""),
            :endpoint (season-stats-ranked-endpoint id season-id)})
          :body
          p/player-season-ranked-stats-parse)))
