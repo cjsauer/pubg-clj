@@ -23,9 +23,9 @@
      ~@body))
 
 (defn- api-url
-  "Constructs a valid PubG API URL given a platform, region, and endpoint. region
-  is optional. Query parameters are not included, and should be added by the
-  HTTP client mechanism."
+  "Constructs a valid PubG API URL given a platform or platform-region,
+  and endpoint. Query parameters are not included, and should be added
+  by the HTTP client mechanism."
   [{:keys [platform endpoint]}]
   (cond-> "https://api.pubg.com/"
     (or platform) (concat "shards/")
@@ -40,10 +40,11 @@
   (update resp :body #(json/parse-string % ->kebab-case-keyword)))
 
 (defn pubg-fetch
-  "Makes a request to the PubG API using the given api-key, platform,
-  region (optional), endpoint and query parameters (qparams). Platform, region
-  and endpoint are all used to construct the final URL, but this can be
-  overidden using the url key. Returns the response map."
+  "Makes a request to the PubG API using the given api-key, platform or
+  platform-region, endpoint and query parameters (qparams). Platform
+  or platform-region and endpoint are used to construct the final URL,
+  but this can be overidden using the url key. Returns the response
+  map."
   [{:keys [api-key platform endpoint qparams url] :as opts}]
   (let [api-key (or api-key *api-key*)
         url (or url (api-url opts))
@@ -54,10 +55,11 @@
     (parse-response-body resp)))
 
 (defn pubg-fetch-async
-  "Asynchronously makes a request to the PubG API using the given api-key, platform,
-  region (optional), endpoint and query parameters (qparams). Platform, region
-  and endpoint are all used to construct the final URL, but this can be
-  overidden with the url key. Passes the response map to succ upon success, or
+  "Asynchronously makes a request to the PubG API using the given
+  api-key, platform or platform-region, endpoint and query
+  parameters (qparams). Platform or platform-region and endpoint are
+  all used to construct the final URL, but this can be overidden with
+  the url key. Passes the response map to succ upon success, or
   exception data to err upon failure."
   [{:keys [api-key platform endpoint qparams url] :as opts} succ err]
   (let [api-key (or api-key *api-key*)]
@@ -198,7 +200,7 @@
       (<!! (async/into [] out>)))))
 
 (defn fetch-match-samples
-  "Fetches n random matches for the given platform and region in parallel."
+  "Fetches n random matches for the given platform in parallel."
   [n platform]
   (let [match-samples (->> (pubg-fetch {:platform platform
                                         :endpoint (match-samples-endpoint)})
@@ -232,8 +234,10 @@
 ;; Leaderboard
 
 (defn fetch-leaderboard
-  "Retrieves the leaderboard for the given platform and game mode. Currently
-  leaderboards are only available on PC."
+  "Retrieves the leaderboard for the given platform and game mode.
+  Currently leaderboards are only available on PC. For seasons prior
+  to division.bro.official.2018-09, provide a platform-shard instead
+  of platform."
   [platform game-mode]
   (->> (pubg-fetch {:platform platform
                     :endpoint (leaderboard-endpoint game-mode)})
@@ -253,35 +257,32 @@
        (mapv p/season-parse)))
 
 (defn fetch-current-season
-  "Fetches the season that is currently in progress for the given platform."
+  "Fetches the season that is currently in progress for the given
+  platform."
   [platform]
   (->> (fetch-seasons platform)
        (filter :pubg.season/is-current?)
        first))
 
 (defn fetch-player-season-stats
-  "Fetches the season stats for a given player and season. The region is required
-  for PS4, Xbox, and for stats of PC players prior to and including
-  division.bro.official.2018-09. It is probably best to always include the
-  region, as the API will respond with stats for EVERY region in the cases where
-  it is depracated."
-  [player season-id]
-  (let [{:keys [pubg.player/id pubg/shard-id]} player]
-    (->> (pubg-fetch {:platform shard-id
+  "Fetches the season stats for a given platform, player and season. For
+  seasons prior to division.bro.official.2018-09, provide a
+  platform-shard instead of platform."
+  [platform player season-id]
+  (let [{:keys [pubg.player/id]} player]
+    (->> (pubg-fetch {:platform platform
                       :endpoint (season-stats-endpoint id season-id)})
          :body
          p/player-season-stats-parse)))
 
 (defn fetch-player-ranked-season-stats
-  "Fetches the ranked season stats for a given player and season. The
-  region is required for PS4, Xbox, and for stats of PC players prior
-  to and including division.bro.official.2018-09. It is probably best
-  to always include the region, as the API will respond with stats for
-  EVERY region in the cases where it is depracated."
-  [player season-id]
-  (let [{:keys [pubg.player/id pubg/shard-id]} player]
+  "Fetches the season stats for a given platform, player and season. For
+  seasons prior to division.bro.official.2018-09, provide a
+  platform-shard instead of platform."
+  [platform player season-id]
+  (let [{:keys [pubg.player/id]} player]
     (->> (pubg-fetch
-          {:platform shard-id,
+          {:platform platform
            :endpoint (season-stats-ranked-endpoint id season-id)})
          :body
          p/player-season-ranked-stats-parse)))
