@@ -24,8 +24,7 @@
   by the HTTP client mechanism."
   [{:keys [platform endpoint]}]
   (cond-> "https://api.pubg.com/"
-    (or platform) (concat "shards/")
-    platform (concat platform)
+    platform (concat "shards/" platform)
     endpoint (concat "/" endpoint)
     true str/join))
 

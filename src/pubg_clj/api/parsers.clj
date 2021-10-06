@@ -276,6 +276,14 @@
    :using #(let [stats (map pack-game-mode-stats %)]
              (mapv season-stats-parse stats))}})
 
+(defparser
+ player-season-ranked-stats-parse
+ {:pubg.player/id {:from [:data :relationships :player :data :id]},
+  :pubg.player/season-stats
+  {:from [:data :attributes :game-mode-stats],
+   :using #(let [stats (map pack-game-mode-stats %)]
+             (mapv season-ranked-stats-parse stats))}})
+
 (defparser telemetry-common-parse
            {:pubg.match.telemetry.common/is-game {:from [:is-game]}})
 
