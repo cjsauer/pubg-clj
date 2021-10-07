@@ -174,6 +174,39 @@
    :pubg.season.stats/wins                   {:from [:wins]}
    })
 
+(defparser season-ranked-stats-parse
+ {:pubg/game-mode                         {:from [:game-mode]},
+  :pubg.season.stats/kills                {:from [:kills]},
+  :pubg.season.stats/kill-streak          {:from [:kill-streak]},
+  :pubg.season.stats/boosts               {:from [:boosts]},
+  :pubg.season.stats/team-kills           {:from [:team-kills]},
+  :pubg.season.stats/revives              {:from [:revives]},
+  :pubg.season.stats/assists              {:from [:assists]},
+  :pubg.season.stats/kdr                  {:from [:kdr]},
+  :pubg.season.stats/revive-ratio         {:from [:revive-ratio]},
+  :pubg.season.stats/avg-rank             {:from [:avg-rank]},
+  :pubg.season.stats/deaths               {:from [:deaths]},
+  :pubg.season.stats/damage-dealt         {:from [:damage-dealt]},
+  :pubg.season.stats/weapons-acquired     {:from [:weapons-acquired]},
+  :pubg.season.stats/heals                {:from [:heals]},
+  :pubg.season.stats/play-time            {:from [:play-time]},
+  :pubg.season.stats/top-10-ratio         {:from [:top-10-ratio]},
+  :pubg.season.stats/kda                  {:from [:kda]},
+  :pubg.season.stats/headshot-kill-ratio  {:from [:headshot-kill-ratio]},
+  :pubg.season.stats/current-rank-point   {:from [:current-rank-point]},
+  :pubg.season.stats/dbnos                {:from [:d-bn-os]},
+  :pubg.season.stats/best-tier            {:from [:best-tier :tier]},
+  :pubg.season.stats/avg-survival-time    {:from [:avg-survival-time]},
+  :pubg.season.stats/round-most-kills     {:from [:round-most-kills]},
+  :pubg.season.stats/headshot-kills       {:from [:headshot-kills]},
+  :pubg.season.stats/current-tier         {:from [:current-tier :tier]},
+  :pubg.season.stats/current-sub-tier     {:from [:current-tier :sub-tier]},
+  :pubg.season.stats/best-rank-point      {:from [:best-rank-point]},
+  :pubg.season.stats/longest-kill         {:from [:longest-kill]},
+  :pubg.season.stats/wins                 {:from [:wins]},
+  :pubg.season.stats/win-ratio            {:from [:win-ratio]},
+  :pubg.season.stats/rounds-played        {:from [:rounds-played]}})
+
 (defn- pack-game-mode-stats
   [[game-mode-key stats-map]]
   (assoc stats-map :game-mode (name game-mode-key)))
@@ -183,6 +216,13 @@
    :pubg.player/season-stats {:from [:data :attributes :game-mode-stats]
                               :using #(let [stats (map pack-game-mode-stats %)]
                                         (mapv season-stats-parse stats))}})
+
+(defparser
+ player-season-ranked-stats-parse
+ {:pubg.player/id     {:from [:data :relationships :player :data :id]},
+  :pubg.player/season-stats {:from [:data :attributes :game-mode-stats],
+                             :using #(let [stats (map pack-game-mode-stats %)]
+                                       (mapv season-ranked-stats-parse stats))}})
 
 (defparser telemetry-common-parse
   {:pubg.match.telemetry.common/is-game {:from [:is-game]}})
@@ -366,4 +406,3 @@
                                                maybe-discard (fn [x]
                                                                (if (map? x) (discard-nil-vals x) x))]
                                            (walk/postwalk maybe-discard evts))}})
-

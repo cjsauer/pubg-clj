@@ -91,6 +91,9 @@
 (defn- season-stats-endpoint
   [player-id season-id]
   (str "players/" player-id "/seasons/" season-id))
+(defn- season-ranked-stats-endpoint
+  [player-id season-id]
+  (str "players/" player-id "/seasons/" season-id "/ranked"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Status
@@ -271,3 +274,18 @@
                       :endpoint (season-stats-endpoint id season-id)})
          :body
          p/player-season-stats-parse)))
+
+(defn fetch-player-season-ranked-stats
+  "Fetches the ranked season stats for a given player and season. The
+  region is required for PS4, Xbox, and for stats of PC players prior
+  to and including division.bro.official.2018-09. It is probably best
+  to always include the region, as the API will respond with stats for
+  EVERY region in the cases where it is depracated."
+  [player season-id & [region]]
+  (let [{:keys [pubg.player/id pubg/shard-id]} player]
+    (->> (pubg-fetch
+          {:platform shard-id,
+           :region (or region ""),
+           :endpoint (season-ranked-stats-endpoint id season-id)})
+         :body
+         p/player-season-ranked-stats-parse)))
