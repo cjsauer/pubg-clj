@@ -219,8 +219,8 @@
 
 (defparser
  player-season-ranked-stats-parse
- {:pubg.player/id     {:from [:data :relationships :player :data :id]},
-  :pubg.player/season-stats {:from [:data :attributes :game-mode-stats],
+ {:pubg.player/id                  {:from [:data :relationships :player :data :id]},
+  :pubg.player/season-ranked-stats {:from [:data :attributes :ranked-game-mode-stats]
                              :using #(let [stats (map pack-game-mode-stats %)]
                                        (mapv season-ranked-stats-parse stats))}})
 

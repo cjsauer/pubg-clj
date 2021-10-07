@@ -30,7 +30,7 @@
   (cond-> "https://api.pubg.com/"
     (or platform region) (concat "shards/")
     platform             (concat platform)
-    region               (concat "-" region)
+    ;; region               (concat "-" region)
     endpoint             (concat "/" endpoint)
     true str/join))
 
